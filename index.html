@@ -1,45 +1,74 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-language" content="en-EN" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
 
-<head>
-    <meta charset="utf-8" />
+    <title>WebAR.rocks.face flexible mask demo</title>
+    
+    <!-- INCLUDE WebAR.rocks.face MAIN SCRIPT -->
+    <script src="./dist/WebARRocksFace.js"></script>
+    
+    <!-- INCLUDE MAIN HELPER -->
+    <script src="./helpers/WebARRocksFaceThreeHelper.js"></script>
 
-    <title>Zappar for A-Frame</title>
-<script src='https://aframe.io/releases/1.2.0/aframe.min.js'></script><script src='https://libs.zappar.com/zappar-aframe/2.0.0/zappar-aframe.js'></script>
-    <style>
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-        }
+    <!-- INCLUDE FLEXIBLE MASK HELPER: -->
+    <script src="./helpers/WebARRocksFaceFlexibleMaskHelper.js"></script>
+
+    <!-- INCLUDE LANDMARKS STABILIZER -->
+    <script src="./helpers/landmarksStabilizers/WebARRocksLMStabilizer.js"></script>
+    
+    <!-- THREE.JS, FOR THE RENDERING -->
+    <!-- WARNING: for production you should replace three.js by three.min.js -->
+    <script src="./libs/three/v136/build/three.js"></script>
+    <script src="./libs/three/v136/examples/js/loaders/GLTFLoader.js"></script>
+
+    <!-- INCLUDE DEMO SCRIPT AND GLASSES CREATOR -->
+    <script src="./main.js"></script>
+
+    <style type='text/css'>
+      body {
+        margin: 0;
+        background-color: black;
+        color: white;
+      }
+      #WebARRocksFaceCanvas, #threeCanvas {
+        position: fixed;
+        width: 100vw;
+        top: 0;
+        left: 0;
+        /* mirror the canvas: */
+        transform: rotateY(180deg);
+      }
+
+      #WebARRocksFaceCanvas {
+        z-index: 0;
+      }
+      #threeCanvas {
+        z-index: 1;
+      }
     </style>
-</head>
+  </head>
+  <body>
+     <!--
+      The first canvas is used by WebAR.rocks.face
+      It is linked to a WebGL context used by the deep learning engine
+      And it displays the video of the webcam.
+      
+      Since we need to transfer the video to a texture for face detection,
+      it is not costly at all to use this texture for display.
 
-<body>
-<script type="module" src="index.js"></script>
-    <a-scene>
-        <!-- Ask user for camera permissions -->
-        <a-entity zappar-permissions-ui id="permissions"></a-entity>
-        <!-- Browser Compatibility -->
-        <a-entity zappar-compatibility-ui id="compatibility"></a-entity>
-        <a-assets>
-            <img id="face-mesh-template" src="faceMeshTemplate.png"/>
-        </a-assets>
+      You can tweak the rendering of the video in WebARRocksFaceThreeHelper.js,
+      by editing the fragment shader of _shps.copy
+    -->
+    <canvas id='WebARRocksFaceCanvas'></canvas>
 
-        <a-entity camera zappar-camera="user-facing: true;"></a-entity>
 
-        <a-entity zappar-face id="face-group">
-
-            <!-- PLACE 3D OBJECTS HERE TO TRACK FROM THE CENTER OF THE FACE -->
-            <a-box scale="0.2 0.2 0.2"></a-box>
-
-            <!-- AND/OR USE USE A FACE MESH OBJECT THAT FITS TO THE FACE AS THE USER'S EXPRESSION CHANGES -->
-            <a-entity geometry="primitive: face-mesh; face: #face-group" material="src:#face-mesh-template; transparent: true;"></a-entity>
-
-        </a-entity>
-    </a-scene>
-</body>
-
+    <!--
+      The second canvas is used by THREE.js for 3D rendering:
+    -->
+    <canvas id='threeCanvas'></canvas>
+  </body>
 </html>
+ 
